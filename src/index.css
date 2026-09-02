@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@theme {
+  --color-navy-950: #020B1A;
+  --color-navy-900: #061528;
+  --color-navy-800: #0a1f3a;
+  --color-navy-700: #0e2a4d;
+  --color-navy-600: #123a63;
+  --color-electric-500: #00BFFF;
+  --color-electric-400: #33CCFF;
+  --color-electric-300: #66D9FF;
+  --color-gold-500: #D9A928;
+  --color-gold-400: #E8BE4A;
+  --color-gold-300: #F0D075;
+}
+
+@layer base {
+  * {
+    @apply border-navy-700/30;
+  }
+  body {
+    @apply bg-[#020B1A] text-white;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-[#0a1f3a] border border-[#0e2a4d] rounded-xl shadow-lg;
+  }
+  .card-hover {
+    @apply transition-all duration-200 hover:border-[#00BFFF]/40 hover:shadow-[0_0_20px_rgba(0,191,255,0.1)];
+  }
+  .btn-primary {
+    @apply bg-[#00BFFF] text-[#020B1A] font-semibold rounded-lg px-4 py-2.5 transition-all hover:bg-[#33CCFF] hover:shadow-[0_0_15px_rgba(0,191,255,0.4)] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply bg-[#0e2a4d] text-white font-medium rounded-lg px-4 py-2.5 transition-all hover:bg-[#123a63] border border-[#123a63];
+  }
+  .btn-gold {
+    @apply bg-[#D9A928] text-[#020B1A] font-semibold rounded-lg px-4 py-2.5 transition-all hover:bg-[#E8BE4A];
+  }
+  .btn-danger {
+    @apply bg-red-600 text-white font-semibold rounded-lg px-4 py-2.5 transition-all hover:bg-red-500;
+  }
+  .btn-whatsapp {
+    @apply bg-green-600 text-white font-semibold rounded-lg px-4 py-2.5 transition-all hover:bg-green-500 inline-flex items-center gap-2;
+  }
+  .input {
+    @apply w-full bg-[#061528] border border-[#0e2a4d] rounded-lg px-4 py-2.5 text-white placeholder-white/30 focus:outline-none focus:border-[#00BFFF] focus:ring-1 focus:ring-[#00BFFF] transition-all;
+  }
+  .label {
+    @apply block text-sm font-medium text-white/70 mb-1.5;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium;
+  }
+  .skeleton {
+    @apply bg-[#0e2a4d] animate-pulse rounded-lg;
+  }
+}
+
+@keyframes slide-in-from-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.animate-in {
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+}
+
+.slide-in-from-right {
+  animation-name: slide-in-from-right;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #061528;
+}
+::-webkit-scrollbar-thumb {
+  background: #0e2a4d;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #123a63;
+}
