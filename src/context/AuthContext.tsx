@@ -68,6 +68,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     if (error) return { error: error.message };
     if (data.user) {
+      try {
+        const { data: rolesData } = await supabase
+          .from('roles')
+          .select('id')
+          .eq('name', 'cliente')
+          .single();
+
+        if (rolesData?.id) {
+          await supabase.from('profiles').insert([
+            {
+              id: data.user.id,
+              full_name: fullName || 'Usuario',
+              phone: phone || null,
+              role_id: rolesData.id,
+              is_active: true,
+            },
+          ]);
+        }
+      } catch (profileError) {
+        console.error('Error creating profile:', profileError);
+      }
       await loadProfile(data.user.id);
     }
     return { error: null };

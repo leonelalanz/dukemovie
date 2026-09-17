@@ -24,15 +24,22 @@ export function RenewalsPage() {
   const [renewMethod, setRenewMethod] = useState('');
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
+  const [exchangeRates, setExchangeRates] = useState<Record<string, number>>({});
 
   async function load() {
     setLoading(true);
-    const [s, m] = await Promise.all([
+    const [s, m, r] = await Promise.all([
       supabase.from('subscriptions').select('*, client:clients(*), service:services(*)').in('status', ['activa', 'proxima_vencer', 'vencida']).order('end_date'),
       supabase.from('payment_methods').select('*').eq('status', 'activo'),
+      supabase.from('exchange_rates').select('currency, rate').order('created_at', { ascending: false }),
     ]);
     setSubs((s.data ?? []) as Subscription[]);
     setMethods((m.data ?? []) as PaymentMethod[]);
+    const rates: Record<string, number> = {};
+    for (const row of (r.data ?? []) as { currency: string; rate: number }[]) {
+      if (!(row.currency in rates)) rates[row.currency] = row.rate;
+    }
+    setExchangeRates(rates);
     setLoading(false);
   }
 
@@ -73,7 +80,10 @@ export function RenewalsPage() {
     const name = sub.client?.first_name ?? '';
     const service = sub.service?.name ?? '';
     const date = formatDate(sub.end_date);
-    const price = formatCurrency(sub.price, sub.currency);
+    const rate = exchangeRates[sub.currency];
+    const price = sub.currency !== 'BS' && rate
+      ? formatCurrency(sub.price * rate, 'BS')
+      : formatCurrency(sub.price, sub.currency);
     return `Hola, ${name}. Tu servicio de ${service} vence el ${date}. Puedes renovarlo por ${price}. Escríbenos para mantener tu acceso activo. Duke Movie.`;
   };
 
