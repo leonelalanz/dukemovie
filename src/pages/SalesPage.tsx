@@ -4,7 +4,7 @@ import { Plus, ShoppingCart, Search, Eye, Download, Pencil, Trash2 } from 'lucid
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
-import { formatCurrency, formatDate, daysRemaining, generateOperationNumber, addDays, downloadCSV } from '@/lib/utils';
+import { formatCurrency, formatDate, daysRemaining, generateOperationNumber, addDays, downloadCSV, subscriptionStatus } from '@/lib/utils';
 import { StatusBadge, EmptyState, Skeleton, Modal, ConfirmDialog } from '@/components/ui';
 import type { Subscription, Client, Service, PaymentMethod, ExchangeRate, BusinessSettings } from '@/types';
 
@@ -138,12 +138,12 @@ export function SalesPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <p className="text-sm font-medium text-white truncate">{sub.client?.first_name} {sub.client?.last_name}</p>
-                    <StatusBadge status={sub.status} />
+                    <StatusBadge status={subscriptionStatus(sub.status, sub.end_date)} />
                   </div>
                   <p className="text-xs text-white/50">{sub.operation_number} — {sub.service?.name} ({sub.modality})</p>
                   <p className="text-xs text-white/40">
                     Vence: {formatDate(sub.end_date)}
-                    {sub.status === 'activa' || sub.status === 'proxima_vencer' ? ` · ${days === 0 ? 'Hoy' : `${days} días`}` : ''}
+                    {days >= 0 ? ` · ${days === 0 ? 'Hoy' : `${days} días`}` : ''}
                   </p>
                 </div>
                 <div className="text-right shrink-0">
@@ -178,7 +178,7 @@ export function SalesPage() {
               <Info label="Modalidad" value={viewSub.modality} />
               <Info label="Precio" value={formatCurrency(viewSub.price, viewSub.currency)} />
               <Info label="Método de pago" value={viewSub.payment_method ?? '—'} />
-              <Info label="Estado" value={<StatusBadge status={viewSub.status} />} />
+              <Info label="Estado" value={<StatusBadge status={subscriptionStatus(viewSub.status, viewSub.end_date)} />} />
               <Info label="Fecha inicio" value={formatDate(viewSub.start_date)} />
               <Info label="Fecha vencimiento" value={formatDate(viewSub.end_date)} />
               <Info label="Días restantes" value={String(daysRemaining(viewSub.end_date))} />

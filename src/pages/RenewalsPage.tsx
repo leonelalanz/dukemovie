@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
-import { formatCurrency, formatDate, daysRemaining, addDays, buildWhatsAppUrl } from '@/lib/utils';
+import { formatCurrency, formatDate, daysRemaining, addDays, buildWhatsAppUrl, subscriptionStatus } from '@/lib/utils';
 import { StatusBadge, EmptyState, Skeleton, Modal } from '@/components/ui';
 import type { Subscription, PaymentMethod } from '@/types';
 
@@ -80,10 +80,15 @@ export function RenewalsPage() {
     const name = sub.client?.first_name ?? '';
     const service = sub.service?.name ?? '';
     const date = formatDate(sub.end_date);
+    const duration = sub.service?.duration_days ?? 30;
     const rate = exchangeRates[sub.currency];
     const price = sub.currency !== 'BS' && rate
       ? formatCurrency(sub.price * rate, 'BS')
       : formatCurrency(sub.price, sub.currency);
+
+    if (subscriptionStatus(sub.status, sub.end_date) === 'vencida') {
+      return `¡Hola, ${name}! 😊 Te informamos que tu servicio de ${service} ya se encuentra vencido.\n\nPuedes renovarlo por ${price} y continuar disfrutándolo durante ${duration} días.\n\nSi deseas realizar la renovación, respóndenos por este medio y con gusto te ayudamos. 👑\n\nDuke Movie`;
+    }
     return `Hola, ${name}. Tu servicio de ${service} vence el ${date}. Puedes renovarlo por ${price}. Escríbenos para mantener tu acceso activo. Duke Movie.`;
   };
 
@@ -169,7 +174,7 @@ export function RenewalsPage() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <p className="text-sm font-medium text-white truncate">{sub.client?.first_name} {sub.client?.last_name}</p>
-                      <StatusBadge status={sub.status} />
+                      <StatusBadge status={subscriptionStatus(sub.status, sub.end_date)} />
                     </div>
                     <p className="text-xs text-white/50">{sub.service?.name} — {sub.operation_number}</p>
                     <p className="text-xs text-white/40 flex items-center gap-1">

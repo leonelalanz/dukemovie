@@ -4,7 +4,7 @@ import { Search, Plus, Users, MessageCircle, Eye, Pencil, Download, Phone } from
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
-import { formatCurrency, formatDate, buildWhatsAppUrl, downloadCSV, normalizePhone } from '@/lib/utils';
+import { formatCurrency, formatDate, buildWhatsAppUrl, downloadCSV, normalizePhone, subscriptionStatus } from '@/lib/utils';
 import { StatusBadge, EmptyState, Skeleton, ConfirmDialog } from '@/components/ui';
 import type { Client, Subscription, Payment, SupportTicket, Renewal } from '@/types';
 
@@ -422,7 +422,7 @@ export function ClientDetailPage({ clientId }: { clientId: string }) {
               </div>
               <div className="text-right">
                 <p className="text-sm font-semibold text-[#D9A928]">{formatCurrency(s.price, s.currency)}</p>
-                <StatusBadge status={s.status} />
+                <StatusBadge status={subscriptionStatus(s.status, s.end_date)} />
               </div>
             </div>
           )) : <p className="text-white/30 text-sm text-center py-8">Sin compras registradas</p>

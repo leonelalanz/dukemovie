@@ -44,6 +44,14 @@ export function daysRemaining(endDate: string | Date): number {
   return daysBetween(new Date(), endDate);
 }
 
+export function subscriptionStatus(status: string, endDate: string | Date): string {
+  if (status !== 'activa' && status !== 'proxima_vencer' && status !== 'vencida') return status;
+  const days = daysRemaining(endDate);
+  if (days < 0) return 'vencida';
+  if (days <= 7) return 'proxima_vencer';
+  return 'activa';
+}
+
 export function addDays(date: string | Date, days: number): Date {
   const d = typeof date === 'string' ? new Date(date) : new Date(date);
   d.setDate(d.getDate() + days);

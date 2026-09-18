@@ -292,7 +292,19 @@ export function ServiceFormPage({ serviceId }: { serviceId?: string }) {
           </div>
           <div>
             <label className="label">Costo interno</label>
-            <input type="number" step="0.01" value={form.internal_cost} onChange={(e) => setForm({ ...form, internal_cost: e.target.value })} className="input" />
+            <div className="space-y-2">
+              <input type="number" step="0.01" value={form.internal_cost} onChange={(e) => setForm({ ...form, internal_cost: e.target.value })} className="input" />
+              {form.currency === 'USD' && exchangeRates.USD && (
+                <div className="text-sm text-white/70 bg-[#0e2a4d] p-2 rounded">
+                  Equivalente en BS: {formatCurrency(parseFloat(form.internal_cost || '0') * exchangeRates.USD, 'BS')}
+                </div>
+              )}
+              {form.currency === 'EUR' && exchangeRates.EUR && (
+                <div className="text-sm text-white/70 bg-[#0e2a4d] p-2 rounded">
+                  Equivalente en BS: {formatCurrency(parseFloat(form.internal_cost || '0') * exchangeRates.EUR, 'BS')}
+                </div>
+              )}
+            </div>
           </div>
           <div>
             <label className="label">Estado</label>
